@@ -2,6 +2,8 @@
 #include <string>
 #include "my_any.h"
 
+using namespace utils;
+
 TEST(my_any, CorrectWorkEquelOperator) {
     int b = 5;
     my_any a(b);
