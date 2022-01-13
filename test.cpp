@@ -4,81 +4,55 @@
 
 using namespace utils;
 
-TEST(my_any, CorrectWorkEquelOperator) {
+// CR: invoke all of the my_any methods for some type
+
+
+TEST(my_any, CorrectWorkEqualOperator) {
     int b = 5;
     my_any a(b);
     a = 4;
 
-    try {
-        auto h = my_any_cast<int>(&a);
-        EXPECT_EQ(h, 4);
-    }catch (any_cast_error & e){
-        std::string expected = "Wrong type";
-        bool result = e.what() == expected;
-        EXPECT_TRUE(!result);
-    }
+    auto h = my_any_cast<int>(&a);
+    EXPECT_EQ(h, 4);
 }
 
 TEST(my_any, CorrectWorkMyAnyMoveConstuct) {
-    int b = 5;
     auto a = my_any(5);
 
-    try {
-        auto h = my_any_cast<int>(&a);
-        EXPECT_EQ(h, b);
-    }catch (any_cast_error & e){
-        std::string expected = "Wrong type";
-        bool result = e.what() == expected;
-        EXPECT_TRUE(!result);
-    }
+    auto h = my_any_cast<int>(&a);
+    EXPECT_EQ(h, 5);
 }
 
 TEST(my_any, TrueWorkMyAnyCastAndValueCopyConstuct) {
     int b = 5;
     auto a = my_any(b);
 
-    try {
-        auto h = my_any_cast<int>(&a);
-        EXPECT_EQ(h, b);
-    }catch (any_cast_error & e){
-        std::string expected = "Wrong type";
-        bool result = e.what() == expected;
-        EXPECT_TRUE(!result);
-    }
+    auto h = my_any_cast<int>(&a);
+    EXPECT_EQ(h, 5);
 }
 
 TEST(my_any, ErrorTypeWorkMyAnyCast) {
     int b = 5;
     auto a = my_any(b);
 
-    try {
-        auto h = my_any_cast<float>(&a);
-        EXPECT_EQ(h, 2);
-    }catch (any_cast_error & e){
-        std::string expected = "Wrong type";
-        bool result = e.what() == expected;
-        EXPECT_TRUE(result);
-    }
+    EXPECT_THROW(my_any_cast<float>(&a), any_cast_error);
 }
 
 TEST(my_any, TrueMyAnyCastLink) {
     int b = 5;
     auto a = my_any(b);
-
-    try {
-        auto h = my_any_cast<int>(a);
-        EXPECT_EQ(*h, b);
-    }catch (any_cast_error & e){
-        std::string expected = "Wrong type";
-        bool result = e.what() == expected;
-        EXPECT_TRUE(!result);
-    }
+    auto h = my_any_cast<int>(a);
+    // CR: new test to check that this is not a copy
+    EXPECT_EQ(*h, 5);
 }
+
+
 
 TEST(my_any, ErrorTypeMyAnyCastLink) {
     int b = 5;
     auto a = my_any(b);
 
+    // CR: expect throw
     try {
         auto h = my_any_cast<float>(a);
         EXPECT_EQ(*h, 2);
@@ -95,15 +69,9 @@ TEST(my_any, SwapMyAny) {
     auto a = my_any(num1);
     auto b = my_any(num2);
 
-    try {
-        swap(a, b);
-        auto h = my_any_cast<int>(&a);
-        auto g = my_any_cast<int>(&b);
-        EXPECT_EQ(h, num2);
-        EXPECT_EQ(g, num1);
-    }catch (any_cast_error & e){
-        std::string expected = "Wrong type";
-        bool result = e.what() == expected;
-        EXPECT_TRUE(!result);
-    }
+    swap(a, b);
+    auto h = my_any_cast<int>(&a);
+    auto g = my_any_cast<int>(&b);
+    EXPECT_EQ(h, 2);
+    EXPECT_EQ(g, 5);
 }

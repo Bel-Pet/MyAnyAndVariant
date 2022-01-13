@@ -14,19 +14,24 @@ namespace utils {
         template<typename U>
         explicit my_any(const U& value) :storage_(new Derived<U>(value)){}
 
+        // CR: a with nullptr a.storage - bug (+ add test)
+        // CR: +test with initialized a.storage
         my_any(const my_any& a) : storage_(a.storage_->get_copy()) {}
 
+        // CR: sanitizer
         ~my_any() {
             delete storage_;
         }
 
+        // CR: add test for value as variable (non temp)
         template<typename U>
         my_any& operator=(const U& value) {
-            if (storage_ != nullptr)
-                delete storage_;
+            delete storage_;
             storage_ = new Derived<U>(value);
             return *this;
         }
+
+        // CR: operator=(any &)
 
         template<typename U>
         explicit my_any(const U&& value) :storage_(new Derived<U>(value)){}
@@ -59,6 +64,7 @@ namespace utils {
         Base* storage_ = nullptr;
     };
 
+    // CR: check with nullptr
     void swap(my_any& a, my_any& b) {
         std::swap(a.storage_, b.storage_);
     }
@@ -68,12 +74,12 @@ namespace utils {
         auto *child = dynamic_cast<my_any::Derived<T>*>(a->storage_);
 
         if (!child) {
-            std::stringstream ss;
             throw any_cast_error("Wrong type");
         }
         return child->value_;
     }
 
+    // CR: swap return types
     template<typename T>
     T* my_any_cast(const my_any& a) {
         auto *child = dynamic_cast<my_any::Derived<T>*>(a.storage_);
