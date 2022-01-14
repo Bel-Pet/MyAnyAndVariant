@@ -4,6 +4,8 @@ project(my_any)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+add_executable(main my_any.h main.cpp)
+
 include(FetchContent)
 FetchContent_Declare(
         googletest
