@@ -28,6 +28,7 @@ namespace utils {
             delete storage_;
         }
 
+        //Assigning a new value
         template<typename U>
         my_any& operator=(const U& value) {
             delete storage_;
@@ -35,6 +36,7 @@ namespace utils {
             return *this;
         }
 
+        // Assigning a value from another any
         my_any& operator=(const my_any& a) {
             if (this != &a) {
                 delete storage_;
@@ -71,10 +73,13 @@ namespace utils {
         Base* storage_ = nullptr;
     };
 
+    // Swap values of two my_any
     void swap(my_any& a, my_any& b) {
         std::swap(a.storage_, b.storage_);
     }
 
+    // Return a copy of the value contained in my_any if the type matches
+    // Else  throw any_cast_error
     template<typename T>
     T my_any_cast(my_any& a) {
         if (!a.storage_)
@@ -87,6 +92,8 @@ namespace utils {
         return child->value_;
     }
 
+    // Returning a pointer to the value inside my_any if the type matches
+    // Else  throw any_cast_error
     template<typename T>
     T* my_any_cast(const my_any* a) {
         if (!a->storage_)
