@@ -4,6 +4,9 @@
 
 using namespace utils;
 
+// CR: test that invokes all of my_any methods
+// CR: tests with custom class (especially where copy ctor should be invoked)
+
 TEST(my_any, CorrectWorkValueCopyConstuct) {
     int b = 5;
     auto a = my_any(b);

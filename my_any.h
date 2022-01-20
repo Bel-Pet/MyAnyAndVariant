@@ -82,9 +82,6 @@ namespace utils {
     // Else  throw any_cast_error
     template<typename T>
     T my_any_cast(my_any& a) {
-        if (!a.storage_)
-            throw any_cast_error("Wrong type");
-
         auto *child = dynamic_cast<my_any::Derived<T>*>(a.storage_);
 
         if (!child)
@@ -96,9 +93,6 @@ namespace utils {
     // Else  throw any_cast_error
     template<typename T>
     T* my_any_cast(const my_any* a) {
-        if (!a->storage_)
-            throw any_cast_error("Wrong type");
-
         auto *child = dynamic_cast<my_any::Derived<T>*>(a->storage_);
 
         if (!child)
