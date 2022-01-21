@@ -4,8 +4,53 @@
 
 using namespace utils;
 
-// CR: test that invokes all of my_any methods
-// CR: tests with custom class (especially where copy ctor should be invoked)
+class Stack {
+private:
+    std::vector<int> data;
+public:
+    explicit Stack(const int a){
+        data.push_back(a);
+    }
+
+    ~Stack() = default;
+
+    Stack(const Stack& other) { data = other.data; }
+
+    Stack& operator= (const Stack& other) {
+        if (this != &other)
+            data = other.data;
+        return *this;
+    }
+
+    void push(int a){
+        data.push_back(a);
+    }
+    int pop(){
+        int a = data.back();
+        data.pop_back();
+        return a;
+    }
+    int back(){
+        return data.back();
+    }
+    [[nodiscard]] size_t size() const {
+        return data.size();
+    }
+    bool empty(){
+        return data.empty();
+    }
+    friend bool operator==(const Stack& a, const Stack& b);
+};
+bool operator==(const Stack& a, const Stack& b) {
+    if (a.size() != b.size())
+        return false;
+    auto j = b.data.begin();
+    for (auto i = a.data.begin(); i < a.data.end(); ++i) {
+        if (*i != *j)
+            return false;
+    }
+    return true;
+}
 
 TEST(my_any, CorrectWorkValueCopyConstuct) {
     int b = 5;
@@ -82,4 +127,26 @@ TEST(my_any, SwapMyAnyNullptr) {
     swap(a, b);
     ASSERT_THROW(my_any_cast<float>(a), any_cast_error);
     EXPECT_EQ(my_any_cast<int>(b), num1);
+}
+
+TEST(my_any, AllMethods) {
+    std::string str = "Foo";
+    auto a = my_any();
+    a = 9;
+    auto b = my_any(a);
+    EXPECT_EQ(my_any_cast<int>(b), 9);
+    a = str;
+    EXPECT_EQ(my_any_cast<std::string>(a), "Foo");
+    auto c = my_any(5.7);
+    a = c;
+    EXPECT_EQ(my_any_cast<double>(a), 5.7);
+    swap(a, b);
+    EXPECT_EQ(my_any_cast<int>(a), 9);
+    EXPECT_EQ(my_any_cast<double>(b), 5.7);
+}
+
+TEST(my_any, CustomClass) {
+    Stack st(5);
+    my_any a(st);
+    EXPECT_TRUE((my_any_cast<Stack>(a)) == st);
 }
