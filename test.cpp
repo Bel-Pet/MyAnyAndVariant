@@ -136,17 +136,24 @@ TEST(my_any, AllMethods) {
     auto b = my_any(a);
     EXPECT_EQ(my_any_cast<int>(b), 9);
     a = str;
-    EXPECT_EQ(my_any_cast<std::string>(a), "Foo");
-    auto c = my_any(5.7);
-    a = c;
-    EXPECT_EQ(my_any_cast<double>(a), 5.7);
     swap(a, b);
     EXPECT_EQ(my_any_cast<int>(a), 9);
-    EXPECT_EQ(my_any_cast<double>(b), 5.7);
+    // CR: invoke all methods with int type
+    EXPECT_EQ(my_any_cast<int>(b), 9);
 }
 
 TEST(my_any, CustomClass) {
     Stack st(5);
     my_any a(st);
-    EXPECT_TRUE((my_any_cast<Stack>(a)) == st);
+    EXPECT_EQ(my_any_cast<Stack>(a), st);
 }
+
+/*
+ * CR:
+ * 0. create A a
+ * 1. create new any(a)
+ * 2. change something inside of a
+ * 3. will any(a) also change?
+ */
+
+// CR: test my_any_cast(const my_any* a), my_any_cast(const my_any a) : check if they behave differently

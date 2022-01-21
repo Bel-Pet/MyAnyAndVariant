@@ -89,8 +89,8 @@ namespace utils {
         return child->value_;
     }
 
-    // Returning a pointer to the value inside my_any if the type matches
-    // Else  throw any_cast_error
+    // Return a pointer to the value inside my_any if the type matches
+    // Else throw any_cast_error
     template<typename T>
     T* my_any_cast(const my_any* a) {
         auto *child = dynamic_cast<my_any::Derived<T>*>(a->storage_);
