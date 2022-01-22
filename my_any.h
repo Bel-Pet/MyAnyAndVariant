@@ -95,7 +95,7 @@ namespace utils {
         return child->value_;
     }
 
-    // Returning a pointer to the value inside my_any if the type matches
+    // Return a pointer to the value inside my_any if the type matches
     // Else  throw any_cast_error
     // If storage == nullptr throw any_cast_error
     template<typename T>
