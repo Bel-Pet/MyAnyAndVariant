@@ -19,6 +19,7 @@ namespace utils {
         template<typename U>
         explicit my_any(const U&& value) :storage_(new Derived<U>(value)){}
 
+        // Copy value from another my_any
         my_any(const my_any& a) {
             if (a.storage_)
                 storage_ = a.storage_->get_copy();
@@ -28,7 +29,7 @@ namespace utils {
             delete storage_;
         }
 
-        //Assigning a new value
+        //Copy value of type U to storage
         template<typename U>
         my_any& operator=(const U& value) {
             delete storage_;
@@ -36,9 +37,13 @@ namespace utils {
             return *this;
         }
 
-        // Assigning a value from another any
+        // Copy storage form another my_any
         my_any& operator=(const my_any& a) {
             if (this != &a) {
+                if (!a.storage_) {
+                    storage_ = a.storage_;
+                    return *this;
+                }
                 delete storage_;
                 storage_ = a.storage_->get_copy();
             }
@@ -51,7 +56,7 @@ namespace utils {
         friend T my_any_cast(my_any& a);
 
         template<typename T>
-        friend T* my_any_cast(const my_any* a);
+        friend T * my_any_cast(const my_any* a);
 
     private:
         struct Base {
@@ -80,6 +85,7 @@ namespace utils {
 
     // Return a copy of the value contained in my_any if the type matches
     // Else  throw any_cast_error
+    // If storage == nullptr throw any_cast_error
     template<typename T>
     T my_any_cast(my_any& a) {
         auto *child = dynamic_cast<my_any::Derived<T>*>(a.storage_);
@@ -89,16 +95,17 @@ namespace utils {
         return child->value_;
     }
 
-    // Return a pointer to the value inside my_any if the type matches
-    // Else throw any_cast_error
+    // Returning a pointer to the value inside my_any if the type matches
+    // Else  throw any_cast_error
+    // If storage == nullptr throw any_cast_error
     template<typename T>
-    T* my_any_cast(const my_any* a) {
+    T * my_any_cast(const my_any* a) {
         auto *child = dynamic_cast<my_any::Derived<T>*>(a->storage_);
 
         if (!child)
             throw any_cast_error("Wrong type");
         return &child->value_;
     }
-};
+}
 
 #endif //MY_ANY_MY_ANY_H
